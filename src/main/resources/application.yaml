@@ -3,9 +3,9 @@ spring:
     name: ms-pedidos
 
   datasource:
-    url: jdbc:postgresql://localhost:5435/pedidos_db
-    username: springuser
-    password: springpassword
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5435/pedidos_db}
+    username: ${SPRING_DATASOURCE_USERNAME:springuser}
+    password: ${SPRING_DATASOURCE_PASSWORD:springpassword}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -16,9 +16,6 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
 
-  # ==========================================
-  # CONFIGURACIÓN OAUTH2 CON AZURE AD
-  # ==========================================
   security:
     oauth2:
       resourceserver:
@@ -28,6 +25,12 @@ spring:
             - 24a66d14-c9c3-41c1-a93b-7e5926389c91
             - api://24a66d14-c9c3-41c1-a93b-7e5926389c91
 
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:admin}
+    password: ${RABBITMQ_PASSWORD:admin123}
+
 server:
   port: 8083
 
@@ -36,3 +39,8 @@ servicios:
     url: ${CARRITO_SERVICE_URL:http://localhost:8082/api/carrito}
   productos:
     url: ${PRODUCTOS_SERVICE_URL:http://localhost:8081/api/productos}
+
+app:
+  rabbitmq:
+    exchange: pedidos360.exchange
+    routing-key-pedidos: pedidos.routing.key
