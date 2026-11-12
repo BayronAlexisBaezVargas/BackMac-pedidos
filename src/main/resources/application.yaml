@@ -30,6 +30,9 @@ spring:
     port: ${RABBITMQ_PORT:5672}
     username: ${RABBITMQ_USERNAME:admin}
     password: ${RABBITMQ_PASSWORD:admin123}
+    listener:
+      simple:
+        acknowledge-mode: manual
 
 server:
   port: 8083
@@ -43,4 +46,18 @@ servicios:
 app:
   rabbitmq:
     exchange: pedidos360.exchange
-    routing-key-pedidos: pedidos.routing.key
+    dlx: pedidos360.dlx
+    queues:
+      pagos: pagos.queue
+      pagos-dlq: pagos.dlq
+      pedidos-estado: pedidos.estado.queue
+      pedidos-estado-dlq: pedidos.estado.dlq
+      notificaciones: notificaciones.queue
+      notificaciones-dlq: notificaciones.dlq
+    routing-keys:
+      pagos: pagos.routing.key
+      pagos-dlq: pagos.dlq.routing.key
+      pedidos-estado: pedidos.estado.routing.key
+      pedidos-estado-dlq: pedidos.estado.dlq.routing.key
+      notificaciones: notificaciones.routing.key
+      notificaciones-dlq: notificaciones.dlq.routing.key

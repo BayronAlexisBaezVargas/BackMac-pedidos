@@ -10,6 +10,12 @@ El microservicio `ms-pedidos` gestiona el ciclo de vida de las órdenes de compr
 - **Seguridad:** Autenticación y Autorización basada en JWT.
 
 ## Cambios Recientes
+### Versión 1.4.0
+- Implementación de arquitectura asíncrona multi-cola en **RabbitMQ** (`RabbitMQConfig.java`):
+  - Productor de solicitudes de cobro hacia `pagos.queue` (`POST /api/pedidos/{id}/pagar`) y alertas `PEDIDO_CREADO` hacia `notificaciones.queue`.
+  - Consumidor resiliente (`PedidoEstadoRabbitConsumer.java`) sobre `pedidos.estado.queue` con confirmación manual (`ACK`/`NACK`) y desvío a Dead Letter Queue (`pedidos.estado.dlq`) para actualizar el estado del pedido (`EN_PREPARACION` o `CANCELADO`).
+- Soporte dual para ejecución local vía `docker-compose.yml` y despliegue aislado por `Dockerfile` en AWS EC2 (puerto HTTP `8083`, PostgreSQL embebido `5435`).
+
 ### Versión 1.3.1
 - Integración completa con `ms-carrito` mediante Feign Client para vaciado automático y consulta de ítems al crear pedidos.
 - Adaptación para despliegue Cloud Native en AWS Academy con Dockerfile multi-stage y PostgreSQL embebido.

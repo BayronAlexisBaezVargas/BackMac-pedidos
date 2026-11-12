@@ -1,5 +1,7 @@
 package backmac.pedidos.controller;
 
+import backmac.pedidos.dto.SolicitarPagoRequestDTO;
+import backmac.pedidos.dto.SolicitudPagoEventDTO;
 import backmac.pedidos.entity.EstadoPedido;
 import backmac.pedidos.entity.Pedido;
 import backmac.pedidos.service.PedidoService;
@@ -10,6 +12,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/pedidos")
@@ -31,6 +34,26 @@ public class PedidoController {
         String usuarioId = jwt.getSubject();
         Pedido nuevoPedido = pedidoService.procesarCompra(usuarioId, tokenHeader);
         return ResponseEntity.ok(nuevoPedido);
+    }
+
+    @PostMapping("/{id}/pagar")
+    public ResponseEntity<Map<String, Object>> pagarPedidoEnCola(
+            @PathVariable Long id,
+            @RequestBody(required = false) SolicitarPagoRequestDTO request,
+            @AuthenticationPrincipal Jwt jwt) {
+        String usuarioId = jwt.getSubject();
+        String metodoPago = (request != null && request.getMetodoPago() != null)
+                ? request.getMetodoPago()
+                : "TARJETA_CREDITO";
+        String numeroTarjeta = (request != null) ? request.getNumeroTarjeta() : null;
+        SolicitudPagoEventDTO evento = pedidoService.solicitarPagoEnCola(id, metodoPago, numeroTarjeta, usuarioId);
+        return ResponseEntity.accepted().body(Map.of(
+                "pedidoId", evento.getPedidoId(),
+                "monto", evento.getMonto(),
+                "metodoPago", evento.getMetodoPago(),
+                "estado", "EN_COLA",
+                "mensaje", "Solicitud de pago enviada a la cola pagos.queue en RabbitMQ"
+        ));
     }
 
     @PatchMapping("/{id}/estado")
