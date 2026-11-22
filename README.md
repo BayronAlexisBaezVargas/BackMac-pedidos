@@ -10,6 +10,9 @@ El microservicio `ms-pedidos` gestiona el ciclo de vida de las órdenes de compr
 - **Seguridad:** Autenticación y Autorización basada en JWT.
 
 ## Cambios Recientes
+### Versión 1.4.1
+- Alineación de dependencias en `pom.xml` a Spring Boot `3.3.4` y Spring Cloud `2023.0.3` (reemplazo de starters por `spring-boot-starter-web` y `spring-boot-starter-test`) para compilación estable en Docker y AWS EC2.
+
 ### Versión 1.4.0
 - Implementación de arquitectura asíncrona multi-cola en **RabbitMQ** (`RabbitMQConfig.java`):
   - Productor de solicitudes de cobro hacia `pagos.queue` (`POST /api/pedidos/{id}/pagar`) y alertas `PEDIDO_CREADO` hacia `notificaciones.queue`.
